@@ -1,31 +1,52 @@
 
 module CookieCutter
   class Base
-    def self.find(request)
-      new(request.cookie_jar)
-    end
+    class << self
+        def find(request)
+          new(request.cookie_jar)
+        end
 
-    def self.has_name(name)
-      @cookie_name = name
-    end
+        attr_reader :cookie_name
+        def has_name(name)
+          @cookie_name = name
+        end
 
-    def self.cookie_name
-      @cookie_name
-    end
+        attr_reader :cookie_domain
+        def domain(domain_value)
+          @cookie_domain = domain_value
+          add_handler do |cookie|
+            cookie[:domain] = domain_value
+          end
+        end
 
-    def self.has_value_named(value_name, options={})
-      raise "CookieCutter value names must by symbols. #{value_name} is not a symbol" unless value_name.is_a?(Symbol)
-      #make value and value= private when the cookie has one or more named values
-      private :value, :value=, :set_value
+        def has_value_named(value_name, options={})
+          raise "CookieCutter value names must by symbols. #{value_name} is not a symbol" unless value_name.is_a?(Symbol)
+          #make value and value= private when the cookie has one or more named values
+          private :value, :value=, :set_value
 
-      value_key = (options[:store_as] || value_name).to_sym
-      send :define_method, value_name do
-        get_named_value(value_key)
-      end
-      setter_method_name = "#{value_name.to_s}=".to_sym
-      send :define_method, setter_method_name do |value|
-        set_named_value(value_key, value)
-      end
+          value_key = (options[:store_as] || value_name).to_sym
+          send :define_method, value_name do
+            get_named_value(value_key)
+          end
+          setter_method_name = "#{value_name.to_s}=".to_sym
+          send :define_method, setter_method_name do |value|
+            set_named_value(value_key, value)
+          end
+        end
+
+        def add_options(cookie)
+          handlers.each do |handler|
+            handler.call(cookie)
+          end
+        end
+
+        def add_handler(&block)
+          handlers << block
+        end
+
+        def handlers
+          @handlers ||= []
+        end
     end
 
     def initialize(cookie_jar)
@@ -37,7 +58,9 @@ module CookieCutter
     end
 
     def value=(val)
-      @cookie_jar[self.class.cookie_name] = { value: val }
+      cookie = { value: val }
+      self.class.add_options(cookie)
+      @cookie_jar[self.class.cookie_name] = cookie
     end
 
     alias_method :set_value, :value=
