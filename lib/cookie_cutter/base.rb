@@ -7,7 +7,7 @@ module CookieCutter
       end
 
       attr_reader :cookie_name
-      def has_name(name)
+      def store_as(name)
         @cookie_name = name
       end
 
@@ -27,12 +27,12 @@ module CookieCutter
         end
       end
 
-      def is_permanent!
+      def is_permanent
         twenty_years = 60 * 60 * 24 * 365.25 * 20
         lifetime twenty_years
       end
 
-      def has_value_named(value_name, options={})
+      def has_attribute(value_name, options={})
         raise "CookieCutter value names must by symbols. #{value_name} is not a symbol" unless value_name.is_a?(Symbol)
         #make value and value= private when the cookie has one or more named values
         private :value, :value=, :set_value

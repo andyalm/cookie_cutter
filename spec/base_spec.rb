@@ -4,20 +4,20 @@ require_relative 'support/fake_cookie_jar'
 require 'active_support/core_ext'
 
 class SingleValuedCookie < CookieCutter::Base
-  has_name :svc
+  store_as :svc
 end
 
 class MultiValuedCookie < CookieCutter::Base
-  has_name :mvc
+  store_as :mvc
 
-  has_value_named :value1
-  has_value_named :value2, store_as: 'val2'
+  has_attribute :value1
+  has_attribute :value2, store_as: 'val2'
 end
 
 class MyMixedCaseCookie < CookieCutter::Base
-  has_name :my_uppercase_cookie
+  store_as :my_uppercase_cookie
 
-  has_value_named :mixed_case_key, store_as: 'mixedcasekey'
+  has_attribute :mixed_case_key, store_as: 'mixedcasekey'
 end
 
 describe CookieCutter::Base do
@@ -29,7 +29,7 @@ describe CookieCutter::Base do
   describe 'domain' do
     it 'does not set domain if not given' do
       class CookieWithNoDomain < CookieCutter::Base
-        has_name :cwnd
+        store_as :cwnd
       end
       cookie = CookieWithNoDomain.new(cookie_jar)
       cookie.value = "my value"
@@ -37,7 +37,7 @@ describe CookieCutter::Base do
     end
     it 'uses given domain when saving cookie' do
       class CookieWithDomain < CookieCutter::Base
-        has_name :cwd
+        store_as :cwd
         domain :all
       end
       cookie = CookieWithDomain.new(cookie_jar)
@@ -48,7 +48,7 @@ describe CookieCutter::Base do
   describe 'lifetime' do
     it 'default to a session cookie' do
       class CookieWithNoLifetimeSpecified < CookieCutter::Base
-        has_name :cwnls
+        store_as :cwnls
       end
       cookie = CookieWithNoLifetimeSpecified.new(cookie_jar)
       cookie.value = "my value"
@@ -58,7 +58,7 @@ describe CookieCutter::Base do
       now = Time.now
       lifetime = 60
       class CookieWithLifetimeSpecified < CookieCutter::Base
-        has_name :cwls
+        store_as :cwls
 
         lifetime 60
       end
@@ -69,8 +69,8 @@ describe CookieCutter::Base do
     it 'sets expires to 20 years from now if made permanent!' do
       now = Time.now
       class PermanentCookie < CookieCutter::Base
-        has_name :pc
-        is_permanent!
+        store_as :pc
+        is_permanent
       end
       cookie = PermanentCookie.new(cookie_jar)
       cookie.value = "my value"

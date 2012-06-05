@@ -26,11 +26,11 @@ Or install it yourself as:
 ### Define your cookie
 
     class MyCookie < CookieCutter::Base
-      has_name :my
+      store_as :my
       domain :all
-      is_permanent!
-      has_value :language
-      has_value :country
+      is_permanent
+      has_attribute :language
+      has_attribute :country
     end
 
 ### Use your cookie
