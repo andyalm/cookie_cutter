@@ -1,6 +1,11 @@
 # CookieCutter
 
-TODO: Write a gem description
+WARNING: CookieCutter is very early in its development cycle (pre-alpha).
+
+CookieCutter provides a nice DSL for defining your cookies so that you can formalize your cookie definitions.
+This leads to DRY-er code by ensuring that concerns such as the domain and lifetime of a cookie are consistent.
+It also makes it easy to know what info you are putting into your cookies, which is becoming more important
+these days as more laws surrounding cookies get written.
 
 ## Installation
 
@@ -16,9 +21,27 @@ Or install it yourself as:
 
     $ gem install cookie_cutter
 
-## Usage
+## Usage Examples
 
-TODO: Write usage instructions here
+### Define your cookie
+
+    class MyCookie < CookieCutter::Base
+      has_name :my
+      domain :all
+      is_permanent!
+      has_value :language
+      has_value :country
+    end
+
+### Use your cookie
+
+    #writes your cookie
+    cookie = MyCookie.find(request)
+    cookie.language = "fr"
+
+    #reads your cookie
+    cookie = MyCookie.find(request)
+    puts "My language is #{cookie.language}"
 
 ## Contributing
 
