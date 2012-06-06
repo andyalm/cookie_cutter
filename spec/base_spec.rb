@@ -90,22 +90,22 @@ describe CookieCutter::Base do
   end
   describe 'multi-valued cookie' do
     let(:multi_valued_cookie) { MultiValuedCookie.new(cookie_jar) }
-    it 'should update the cookie jar when a value is updated' do
+    it 'should update the cookie jar when an attribute is updated' do
       multi_valued_cookie.value1 = "myval"
       cookie_jar[:mvc][:value1].should == "myval"
     end
-    it 'generates getters and setters for each named value' do
+    it 'generates getters and setters for each attribute' do
       multi_valued_cookie.value1 = "myval1"
       multi_valued_cookie.value2 = "myval2"
 
       multi_valued_cookie.value1.should == "myval1"
       multi_valued_cookie.value2.should == "myval2"
     end
-    it "privatizes 'value' getter and setter" do
+    it "privatizes the singular 'value' getter and setter" do
       expect { multi_valued_cookie.value = "myval"}.should raise_error(NoMethodError)
       expect { multi_valued_cookie.value}.should raise_error(NoMethodError)
     end
-    it "can override stored value name with :store_as option" do
+    it "can override stored attribute name with :store_as option" do
       multi_valued_cookie.value2 = "myval2"
       cookie_jar[:mvc][:val2].should == "myval2"
     end
