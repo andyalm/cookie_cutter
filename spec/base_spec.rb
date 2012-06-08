@@ -77,6 +77,13 @@ describe CookieCutter::Base do
       cookie_jar.metadata_for(:pc)[:expires].should be_within(0.01).of(20.years.from_now)
     end
   end
+  describe 'delete!' do
+    it 'should delete the cookie from the cookie jar' do
+      cookie = SingleValuedCookie.new(cookie_jar)
+      cookie.delete!
+      cookie_jar.deleted?(cookie.cookie_name).should be_true
+    end
+  end
   describe 'single valued cookie' do
     let(:single_valued_cookie) { SingleValuedCookie.new(cookie_jar) }
     it 'should update the cookie jar when value is updated' do

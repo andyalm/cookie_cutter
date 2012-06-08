@@ -12,14 +12,23 @@ class FakeCookieJar
     @cookies[name] = value
   end
 
+  def delete(name)
+    @deleted_cookies << name
+  end
+
   def initialize(*args)
     @cookies = {}
+    @deleted_cookies = []
     if args.any?
       cookies = args.first
       cookies.keys.each do |cookie_name|
         self[cookie_name] = { value: cookies[cookie_name] }
       end
     end
+  end
+
+  def deleted?(name)
+    @deleted_cookies.include?(name)
   end
 
   def to_hash

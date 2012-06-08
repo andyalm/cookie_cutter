@@ -71,14 +71,22 @@ module CookieCutter
       @cookie_jar = cookie_jar
     end
 
+    def cookie_name
+      self.class.cookie_name
+    end
+
     def value
-      @cookie_jar[self.class.cookie_name]
+      @cookie_jar[cookie_name]
     end
 
     def value=(val)
       cookie = { value: val }
       self.class.add_options(cookie)
-      @cookie_jar[self.class.cookie_name] = cookie
+      @cookie_jar[cookie_name] = cookie
+    end
+
+    def delete!
+      @cookie_jar.delete(cookie_name)
     end
 
     alias_method :set_value, :value=
