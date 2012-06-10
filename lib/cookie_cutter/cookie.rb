@@ -31,6 +31,17 @@ module CookieCutter
         lifetime twenty_years
       end
 
+      def secure_requests_only
+        @secure = true
+        add_handler do |cookie|
+          cookie[:secure] = true
+        end
+      end
+
+      def secure?
+        @secure ? true : false
+      end
+
       def has_attribute(value_name, options={})
         raise "CookieCutter value names must by symbols. #{value_name} is not a symbol" unless value_name.is_a?(Symbol)
         #make value and value= private when the cookie has one or more named values
@@ -38,11 +49,11 @@ module CookieCutter
 
         value_key = (options[:store_as] || value_name).to_sym
         send :define_method, value_name do
-          get_named_value(value_key)
+          get_attribute_value(value_key)
         end
         setter_method_name = "#{value_name.to_s}=".to_sym
         send :define_method, setter_method_name do |value|
-          set_named_value(value_key, value)
+          set_attribute_value(value_key, value)
         end
       end
 
@@ -64,8 +75,6 @@ module CookieCutter
     def self.included(klass)
       klass.extend ClassMethods
     end
-
-    #instance methods
 
     def initialize(cookie_jar)
       @cookie_jar = cookie_jar
@@ -89,16 +98,32 @@ module CookieCutter
       @cookie_jar.delete(cookie_name)
     end
 
+    def cookie_name
+      self.class.cookie_name
+    end
+
+    def secure?
+      self.class.secure?
+    end
+
+    def cookie_lifetime
+      self.class.cookie_lifetime
+    end
+
+    def cookie_domain
+      self.class.cookie_domain
+    end
+
     alias_method :set_value, :value=
 
     private
-    def set_named_value(value_name, val)
+    def set_attribute_value(value_name, val)
       values_hash = value() || {}
       values_hash[value_name] = val
       set_value(values_hash)
     end
 
-    def get_named_value(value_name)
+    def get_attribute_value(value_name)
       values_hash = value() || {}
       values_hash[value_name]
     end

@@ -46,7 +46,7 @@ describe CookieCutter::Base do
     end
   end
   describe 'lifetime' do
-    it 'default to a session cookie' do
+    it 'defaults to a session cookie' do
       class CookieWithNoLifetimeSpecified < CookieCutter::Base
         store_as :cwnls
       end
@@ -75,6 +75,25 @@ describe CookieCutter::Base do
       cookie = PermanentCookie.new(cookie_jar)
       cookie.value = "my value"
       cookie_jar.metadata_for(:pc)[:expires].should be_within(0.01).of(20.years.from_now)
+    end
+  end
+  describe 'secure_requests_only' do
+    it 'defaults to all requests (insecure) cookie' do
+      class CookieWithNoSecuritySpecified < CookieCutter::Base
+        store_as :cwnss
+      end
+      cookie = CookieWithNoSecuritySpecified.new(cookie_jar)
+      cookie.value = "my value"
+      cookie_jar.metadata_for(:cwnss)[:secure].should be_nil
+    end
+    it 'sets secure flag when secure_requests_only is specified' do
+      class CookieWithSecureRequestsOnly < CookieCutter::Base
+        store_as :cwsro
+        secure_requests_only
+      end
+      cookie = CookieWithSecureRequestsOnly.new(cookie_jar)
+      cookie.value = "my value"
+      cookie_jar.metadata_for(:cwsro)[:secure].should be_true
     end
   end
   describe 'delete!' do
