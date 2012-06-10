@@ -42,6 +42,19 @@ module CookieCutter
         @secure ? true : false
       end
 
+      def http_only
+        @http_only = true
+        add_handler do |cookie|
+          cookie[:httponly] = true
+        end
+      end
+      alias_method :httponly, :http_only
+
+      def http_only?
+        @http_only ? true : false
+      end
+      alias_method :httponly?, :http_only?
+
       def has_attribute(value_name, options={})
         raise "CookieCutter value names must by symbols. #{value_name} is not a symbol" unless value_name.is_a?(Symbol)
         #make value and value= private when the cookie has one or more named values
@@ -78,10 +91,6 @@ module CookieCutter
 
     def initialize(cookie_jar)
       @cookie_jar = cookie_jar
-    end
-
-    def cookie_name
-      self.class.cookie_name
     end
 
     def value

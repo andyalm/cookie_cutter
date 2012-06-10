@@ -96,6 +96,25 @@ describe CookieCutter::Base do
       cookie_jar.metadata_for(:cwsro)[:secure].should be_true
     end
   end
+  describe 'http_only' do
+    it 'defaults to being accessible to client scripts (i.e. not http_only)' do
+      class ClassWithNoHttpOnly < CookieCutter::Base
+        store_as :cwnho
+      end
+      cookie = ClassWithNoHttpOnly.new(cookie_jar)
+      cookie.value = "my value"
+      cookie_jar.metadata_for(:cwnho)[:httponly].should be_nil
+    end
+    it 'sets httponly flag when http_only is specified' do
+      class CookieWithHttpOnly < CookieCutter::Base
+        store_as :cwho
+        http_only
+      end
+      cookie = CookieWithHttpOnly.new(cookie_jar)
+      cookie.value = "my value"
+      cookie_jar.metadata_for(:cwho)[:httponly].should be_true
+    end
+  end
   describe 'delete!' do
     it 'should delete the cookie from the cookie jar' do
       cookie = SingleValuedCookie.new(cookie_jar)

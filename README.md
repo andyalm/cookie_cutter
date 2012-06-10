@@ -29,6 +29,8 @@ Or install it yourself as:
       store_as :my
       domain :all
       is_permanent
+      secure_requests_only
+      http_only
       has_attribute :language
       has_attribute :country
     end
