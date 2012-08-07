@@ -104,7 +104,9 @@ module CookieCutter
     end
 
     def delete!
-      @cookie_jar.delete(cookie_name)
+      options = {}
+      self.class.add_options(options)
+      @cookie_jar.delete(cookie_name, options)
     end
 
     def cookie_name
