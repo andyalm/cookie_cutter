@@ -1,3 +1,5 @@
+require 'cookie_cutter/cookie_attribute'
+
 module CookieCutter
   module Cookie
     module ClassMethods
@@ -55,19 +57,20 @@ module CookieCutter
       end
       alias_method :httponly?, :http_only?
 
-      def has_attribute(value_name, options={})
-        raise "CookieCutter value names must by symbols. #{value_name} is not a symbol" unless value_name.is_a?(Symbol)
+      def has_attribute(attribute_name, options={})
+        raise "CookieCutter value names must by symbols. #{attribute_name} is not a symbol" unless attribute_name.is_a?(Symbol)
         #make value and value= private when the cookie has one or more named values
         private :value, :value=, :set_value
 
-        value_key = (options[:store_as] || value_name).to_sym
-        send :define_method, value_name do
-          get_attribute_value(value_key)
+        attribute = CookieAttribute.new(attribute_name, options)
+        send :define_method, attribute_name do
+          get_attribute_value(attribute.storage_key)
         end
-        setter_method_name = "#{value_name.to_s}=".to_sym
+        setter_method_name = "#{attribute_name.to_s}=".to_sym
         send :define_method, setter_method_name do |value|
-          set_attribute_value(value_key, value)
+          set_attribute_value(attribute.storage_key, value)
         end
+        attributes << attribute
       end
 
       def add_options(cookie)
@@ -82,6 +85,10 @@ module CookieCutter
 
       def handlers
         @handlers ||= []
+      end
+
+      def attributes
+        @attributes ||= []
       end
     end
 

@@ -154,5 +154,18 @@ describe CookieCutter::Base do
       multi_valued_cookie.value2 = "myval2"
       cookie_jar[:mvc][:val2].should == "myval2"
     end
+    describe 'attribute metadata' do
+      it "should provide attributes array" do
+        MultiValuedCookie.attributes.length.should == 2
+      end
+      it "should provide each attribute name" do
+        MultiValuedCookie.attributes.find{|a| a.name == :value1}.should_not be_nil
+        MultiValuedCookie.attributes.find{|a| a.name == :value2}.should_not be_nil
+      end
+      it "should provide each attribute storage key as a symbol" do
+        MultiValuedCookie.attributes.find{|a| a.name == :value1}.storage_key.should == :value1
+        MultiValuedCookie.attributes.find{|a| a.name == :value2}.storage_key.should == :val2
+      end
+    end
   end
 end

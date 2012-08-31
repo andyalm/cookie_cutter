@@ -12,7 +12,7 @@ class FakeCookieJar
     @cookies[name] = value
   end
 
-  def delete(name)
+  def delete(name, options)
     @deleted_cookies << name
   end
 
