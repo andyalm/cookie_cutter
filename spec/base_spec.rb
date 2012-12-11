@@ -1,6 +1,6 @@
 require 'rspec'
 require 'cookie_cutter'
-require_relative 'support/fake_cookie_jar'
+require 'cookie_cutter/test_support'
 require 'active_support/core_ext'
 
 class SingleValuedCookie < CookieCutter::Base
@@ -21,7 +21,7 @@ class MyMixedCaseCookie < CookieCutter::Base
 end
 
 describe CookieCutter::Base do
-  let(:cookie_jar) { FakeCookieJar.new }
+  let(:cookie_jar) { CookieCutter::TestSupport::FakeCookieJar.new }
   it 'should not not update the cookie_jar when no value is set' do
     SingleValuedCookie.new(cookie_jar)
     cookie_jar.to_hash.should be_empty
@@ -129,7 +129,7 @@ describe CookieCutter::Base do
       cookie_jar[:svc].should == "ordinary value"
     end
     it 'can be read via ordinary cookie jar' do
-      single_value_cookie = SingleValuedCookie.new(FakeCookieJar.new({ svc: "preset value" }))
+      single_value_cookie = SingleValuedCookie.new(CookieCutter::TestSupport::FakeCookieJar.new({ svc: "preset value" }))
       single_value_cookie.value.should == "preset value"
     end
   end
